@@ -6,22 +6,17 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["Inter", "sans-serif"],
-      },
       colors: {
-        primary: "#A78BFA",   // lavender
-        accent:  "#F472B6",   // pink
+        primary: "#7C3AED",
+        secondary: "#22D3EE",
+        accent: "#F472B6",
       },
       backdropBlur: {
-        sm: "8px",
-        md: "16px",
-        lg: "24px",
-      },
-      boxShadow: {
-        neon: "0 0 20px rgba(167,139,250,0.7)",   // glow
-      },
+        xs: "2px",
+        sm: "6px",
+        DEFAULT: "12px",
+      }
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

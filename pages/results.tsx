@@ -5,90 +5,43 @@ import Link from "next/link";
 export default function Results() {
   const { query } = useRouter();
   const idea = decodeURIComponent((query.idea as string) || "");
-  const raw = decodeURIComponent((query.result as string) || "");
+  const raw  = decodeURIComponent((query.result as string) || "");
 
-  // If API failed or no result, show a retry
   if (!raw) {
     return (
-      <div className="
-        min-h-screen flex items-center justify-center
-        bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700
-        p-6
-      ">
-        <div className="
-          bg-[rgba(255,255,255,0.1)] backdrop-blur-lg
-          border border-white/20 rounded-3xl
-          p-8 text-center
-          shadow-neon
-        ">
-          <p className="text-red-400 mb-6">Oops, something went wrong.</p>
-          <Link
-            href="/"
-            className="inline-block px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-xl shadow-neon hover:from-indigo-600 hover:to-pink-600 transition"
-          >
-            ← Try Again
-          </Link>
-        </div>
+      <div className="text-center text-white">
+        <p className="mb-4 text-xl">Oops, no data returned.</p>
+        <Link href="/">
+          <a className="underline text-secondary">Go back</a>
+        </Link>
       </div>
     );
   }
 
-  // Split the LLM output into sections
   const [market, competitors, roadmap] = raw.split("\n\n");
 
-  const Section = ({
-    title,
-    children,
-  }: {
-    title: string;
-    children: React.ReactNode;
-  }) => (
-    <div className="
-      bg-[rgba(255,255,255,0.1)] backdrop-blur-md
-      border border-white/20 rounded-3xl
-      p-6 mb-8
-      shadow-neon
-    ">
-      <h3 className="text-2xl font-semibold text-white mb-3">{title}</h3>
-      <div className="prose prose-white text-gray-200">
-        {children}
-      </div>
-    </div>
+  const Section = ({ title, children }: any) => (
+    <section className="backdrop-blur rounded-3xl border border-white/20 bg-white/10 
+                        shadow-xl p-6 mb-6 text-white">
+      <h3 className="text-2xl font-bold mb-2 text-secondary">{title}</h3>
+      <div className="prose prose-white">{children}</div>
+    </section>
   );
 
   return (
-    <div className="
-      min-h-screen flex flex-col items-center
-      bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700
-      p-6
-    ">
-      <div className="w-full max-w-3xl">
-        <h1 className="text-5xl font-extrabold text-white mb-10 drop-shadow-lg">
-          Insights for “{idea}”
-        </h1>
-        <Section title="Market Summary">
-          {market.split("\n").map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </Section>
-        <Section title="Top Competitors">
-          {competitors.split("\n").map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </Section>
-        <Section title="Roadmap">
-          {roadmap.split("\n").map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </Section>
-        <div className="text-center">
-          <Link
-            href="/"
-            className="inline-block px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-xl shadow-neon hover:from-indigo-600 hover:to-pink-600 transition"
-          >
-            ← Analyze Another Idea
-          </Link>
-        </div>
+    <div className="w-full max-w-2xl text-white">
+      <h1 className="text-5xl font-extrabold text-center mb-12 drop-shadow-xl">
+        Insights for “{idea}”
+      </h1>
+
+      <Section title="Market Summary">{market}</Section>
+      <Section title="Top Competitors">{competitors}</Section>
+      <Section title="Roadmap">{roadmap}</Section>
+
+      <div className="text-center mt-8">
+        <Link href="/">
+          <a className="text-secondary underline">← Analyze another idea</a>
+        </Link>
       </div>
     </div>
   );
