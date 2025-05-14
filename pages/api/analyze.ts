@@ -2,29 +2,50 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 
-// initialize with your env var
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).end();     // only POST
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<{ result?: string; error?: string }>
+) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   const { idea } = req.body;
-  if (!idea) return res.status(400).json({ error: "Missing idea" });
+  if (!idea || typeof idea !== "string") {
+    return res.status(400).json({ error: "Missing or invalid `idea`" });
+  }
 
   try {
-    const response = await openai.chat.completions.create({     // call OpenAI
+    const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "You analyze startup ideas." },
         {
           role: "user",
-          content: `Analyze: "${idea}"\n\n1. Market summary\n2. Top 3 competitors\n3. High-level roadmap`
-        }
+          content: `Analyze: "${idea}"
+  
+1. Market summary
+2. Top 3 competitors
+3. High-level roadmap`
+        },
       ],
+      temperature: 0.7,
     });
-    const result = response.choices[0].message?.content || "";
-    res.status(200).json({ result });                           // return text
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "OpenAI request failed" });
+
+    const content = response.choices?.[0]?.message?.content;
+    if (!content) {
+      throw new Error("No content returned from OpenAI");
+    }
+
+    // Always return { result: string } on success
+    return res.status(200).json({ result: content });
+  } catch (err: any) {
+    console.error("OpenAI error:", err);
+    // Return the error message so the front-end can display it
+    return res
+      .status(500)
+      .json({ error: err.message || "OpenAI request failed" });
   }
 }

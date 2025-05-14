@@ -1,17 +1,26 @@
 // pages/index.tsx
 import { useState } from "react";
+import { Section } from "../components/Section";
+
+type Analysis = {
+  market: string[];
+  competitors: string[];
+  roadmap: string[];
+};
 
 export default function Home() {
   const [idea, setIdea] = useState("");
-  const [analysis, setAnalysis] = useState<string|null>(null);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string|null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!idea.trim()) return;
     setLoading(true);
-    setAnalysis(null);
     setError(null);
+    setAnalysis(null);
+
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -19,9 +28,39 @@ export default function Home() {
         body: JSON.stringify({ idea }),
       });
       const body = await res.json();
-      if (!res.ok) throw new Error(body.error ?? res.statusText);
-      setAnalysis(body.result);
+      console.log("API response:", body);
+
+      if (!res.ok) {
+        // there might be an { error: string } here
+        throw new Error(body.error || res.statusText);
+      }
+
+      const raw: string = body.result;
+      if (typeof raw !== "string") {
+        throw new Error("Invalid API response format");
+      }
+
+      // split into 3 sections by blank line
+      const parts = raw.split(/\n\s*\n/);
+
+      const market = parts[0]
+        .split("\n")
+        .map((l) => l.replace(/^\d+\.\s*/, "").trim())
+        .filter(Boolean);
+
+      const competitors = (parts[1] || "")
+        .split("\n")
+        .map((l) => l.replace(/^[a-z]\.\s*/, "").trim())
+        .filter(Boolean);
+
+      const roadmap = (parts[2] || "")
+        .split("\n")
+        .map((l) => l.replace(/^[-\d\.\s]*/, "").trim())
+        .filter(Boolean);
+
+      setAnalysis({ market, competitors, roadmap });
     } catch (err: any) {
+      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -29,15 +68,14 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full max-w-2xl">
-      <h1 className="text-6xl font-extrabold text-white text-center mb-12 drop-shadow-lg">
-        🚀 VentureLens
+    <div className="flex flex-col items-center justify-start min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 p-6">
+      <h1 className="text-6xl font-extrabold text-white mb-8 drop-shadow-lg">
+        Venture Lens
       </h1>
 
       <form
         onSubmit={submit}
-        className="backdrop-blur rounded-3xl border border-white/20 bg-white/10 
-                   shadow-xl p-8 mb-8 space-y-6"
+        className="w-full max-w-3xl backdrop-blur rounded-3xl border border-white/20 bg-white/10 shadow-xl p-8 mb-12 space-y-6"
       >
         <label className="block text-white font-semibold">
           Describe your startup idea
@@ -45,7 +83,7 @@ export default function Home() {
         <textarea
           rows={4}
           className="w-full p-4 rounded-xl bg-white/30 placeholder-white/70 text-white
-                     focus:outline-none focus:ring-2 focus:ring-secondary transition"
+                     focus:outline-none focus:ring-2 focus:ring-accent transition"
           placeholder="e.g. a protein-infused toothpaste…"
           value={idea}
           onChange={(e) => setIdea(e.target.value)}
@@ -55,8 +93,8 @@ export default function Home() {
           type="submit"
           disabled={loading || !idea.trim()}
           className="w-full py-3 text-lg font-bold rounded-xl
-                     bg-gradient-to-r from-secondary to-accent text-white
-                     hover:from-accent hover:to-secondary disabled:opacity-50 transition"
+                     bg-gradient-to-r from-accent to-secondary text-white
+                     hover:from-secondary hover:to-accent disabled:opacity-50 transition"
         >
           {loading ? "Analyzing…" : "Analyze"}
         </button>
@@ -67,12 +105,22 @@ export default function Home() {
       </form>
 
       {analysis && (
-        <div className="backdrop-blur rounded-3xl border border-white/20 bg-white/10 
-                        shadow-xl p-8 space-y-6 overflow-auto max-h-[60vh] text-white">
-          <h2 className="text-3xl font-bold drop-shadow-sm">Analysis Result</h2>
-          <pre className="whitespace-pre-wrap text-sm leading-relaxed">
-            {analysis}
-          </pre>
+        <div className="w-full max-w-3xl space-y-6 overflow-auto">
+          <Section
+            icon="🔍"
+            title="Market Summary"
+            items={analysis.market}
+          />
+          <Section
+            icon="👥"
+            title="Top Competitors"
+            items={analysis.competitors}
+          />
+          <Section
+            icon="🗺️"
+            title="High-Level Roadmap"
+            items={analysis.roadmap}
+          />
         </div>
       )}
     </div>
