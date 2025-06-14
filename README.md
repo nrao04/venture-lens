@@ -26,8 +26,8 @@
 
 ## Screenshots
 
-![Home Page](<img width="797" alt="ventureLensHomePage" src="https://github.com/user-attachments/assets/a9b980a0-c38d-4a24-a426-c5cbbefdc365" />)  
-![Analysis Results](<img width="743" alt="ventureLensAnalysisPage" src="https://github.com/user-attachments/assets/11da20ad-919c-4063-8d8a-d606e4387146" />)  
+![Home Page](c:\Users\there\Downloads\ventureLensHomePage.png)  
+![Analysis Results](c:\Users\there\Downloads\ventureLensAnalysisPage.png)  
 
 ---
 
