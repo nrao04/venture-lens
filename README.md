@@ -20,7 +20,7 @@
 
 ## Demo
 
-**Live Demo:** [Vercel-Link](https://venture-lens-cl36ozbww-nikhil-raos-projects-53e1b353.vercel.app/)
+**Live Demo:** [Vercel-Link](https://venture-lens-qofl5etmn-nikhil-raos-projects-53e1b353.vercel.app/)
 
 ---
 
