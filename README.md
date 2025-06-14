@@ -26,8 +26,8 @@
 
 ## Screenshots
 
-![Home Page](c:\Users\there\Downloads\ventureLensHomePage.png)  
-![Analysis Results](c:\Users\there\Downloads\ventureLensAnalysisPage.png)  
+![Home Page](/assets/ventureLensHomePage.png)  
+![Analysis Results](/assets/ventureLensAnalysisPage.png)  
 
 ---
 
