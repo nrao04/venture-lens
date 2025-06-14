@@ -81,7 +81,10 @@ export default async function handler(
 
     return res.status(200).json(payload);
   } catch (err: unknown) {
-    console.error("analyze.ts error:", err);
-    return res.status(500).json({ error: "OpenAI request failed" });
+  console.error("analyze.ts error:", err);
+  if (err instanceof Error) {
+    return res.status(500).json({ error: err.message });
+  }
+  return res.status(500).json({ error: "OpenAI request failed" });
   }
 }

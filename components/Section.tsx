@@ -18,8 +18,6 @@ export const Section: React.FC<SectionProps> = ({
     return null;
   }
 
-  //const clean = items.map((i) => i.replace(/^[\-\d\.\s]+/, "").trim());
-
   return (
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6 mb-6 space-y-4">
       <div className="flex items-center space-x-3">
