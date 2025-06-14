@@ -26,7 +26,10 @@
 
 ## Screenshots
 
-![Home Page](/assets/ventureLensHomePage.png)  
+### Home Page
+![Home Page](/assets/ventureLensHomePage.png)
+
+### Results Page
 ![Analysis Results](/assets/ventureLensAnalysisPage.png)  
 
 ---
