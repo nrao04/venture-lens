@@ -27,6 +27,12 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idea }),
       });
+      
+      if (!res.ok) {
+        const text = await res.text(); // fallback for non-JSON error
+        throw new Error(text || res.statusText);
+      }
+
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || res.statusText);
       setData(json);
